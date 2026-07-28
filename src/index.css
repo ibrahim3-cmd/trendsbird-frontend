@@ -1,0 +1,380 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-primary-text: var(--primary-text);
+  --color-secondary-text: var(--secondary-text);
+  --color-system-primary: var(--system-primary);
+  --color-system-secondary: var(--system-secondary);
+  --color-system-primary-text: var(--system-primary-text);
+  --color-system-secondary-text: var(--system-secondary-text);
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+}
+
+:root {
+  --radius: 0.65rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.141 0.005 285.823);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.141 0.005 285.823);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.141 0.005 285.823);
+  --primary: #3B5E3D;
+  --primary-foreground: oklch(0.98 0.016 73.684);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.552 0.016 285.938);
+  --accent: oklch(0.967 0.001 286.375);
+  --accent-foreground: oklch(0.21 0.006 285.885);
+  --destructive: #ef4444;
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: #3B5E3D;
+  --primary-text: #FFFFFF;
+  --secondary-text: #000000;
+  --system-primary: #3B5E3D;
+  --system-secondary: #DBB700;
+  --system-primary-text: #FFFFFF;
+  --system-secondary-text: #000000;
+  --chart-1: #3B5E3D;
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.141 0.005 285.823);
+  --sidebar-primary: #FDC700;
+  --sidebar-primary-foreground: oklch(0.98 0.016 73.684);
+  --sidebar-accent: oklch(0.967 0.001 286.375);
+  --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
+  --sidebar-border: oklch(0.92 0.004 286.32);
+  --sidebar-ring: #FDC700;
+}
+
+.dark {
+  --background: oklch(0.141 0.005 285.823);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.21 0.006 285.885);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.21 0.006 285.885);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: #3B5E3D;
+  --primary-foreground: oklch(0.98 0.016 73.684);
+  --secondary: oklch(0.274 0.006 286.033);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.274 0.006 286.033);
+  --muted-foreground: oklch(0.705 0.015 286.067);
+  --accent: oklch(0.274 0.006 286.033);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: #3B5E3D;
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: #3B5E3D;
+  --primary-text: #FFFFFF;
+  --secondary-text: #000000;
+  --system-primary: #3B5E3D;
+  --system-secondary: #DBB700;
+  --system-primary-text: #FFFFFF;
+  --system-secondary-text: #000000;
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: #FDC700;
+  --sidebar: oklch(0.21 0.006 285.885);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: #FDC700;
+  --sidebar-primary-foreground: oklch(0.98 0.016 73.684);
+  --sidebar-accent: oklch(0.274 0.006 286.033);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: #FDC700;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Custom slim scrollbar styles */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--muted-foreground) / 0.3) transparent;
+  }
+
+  /* Webkit browsers (Chrome, Safari, Edge) */
+  *::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.3);
+    border-radius: 2px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+  }
+
+  /* Dark mode scrollbar */
+  .dark *::-webkit-scrollbar-thumb {
+    background: hsl(var(--muted-foreground) / 0.4);
+  }
+
+  .dark *::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.6);
+  }
+
+  /* Fade in animation */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.3s ease-out forwards;
+  }
+
+  /* Gradient flow animation for AI button */
+  @keyframes gradient-flow {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  .animate-gradient-flow {
+    background-size: 200% 200%;
+    animation: gradient-flow 3s ease infinite;
+  }
+
+  /* Slow spin animation for icon */
+  @keyframes spin-slow {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .animate-spin-slow {
+    animation: spin-slow 3s linear infinite;
+  }
+}
+
+/* Hide native number input spin buttons (remove ^/v) */
+/* WebKit (Chrome, Safari, Edge) */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type="number"] {
+  -moz-appearance: textfield;
+  -webkit-appearance: none;
+}
+
+/* ============================================
+   Driver.js Onboarding Tour Theme
+   ============================================ */
+.driverjs-theme {
+  --driver-popover-bg: white;
+  --driver-popover-text: #1e293b;
+}
+
+.dark .driverjs-theme {
+  --driver-popover-bg: #1e293b;
+  --driver-popover-text: #f8fafc;
+}
+
+/* Main popover container */
+.driver-popover.driverjs-theme {
+  background-color: var(--driver-popover-bg) !important;
+  color: var(--driver-popover-text) !important;
+  border-radius: 12px !important;
+  padding: 20px !important;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+  max-width: 360px !important;
+  border: 1px solid rgba(59, 94, 61, 0.2) !important;
+}
+
+/* Title styling */
+.driver-popover.driverjs-theme .driver-popover-title {
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: var(--driver-popover-text) !important;
+  margin-bottom: 8px !important;
+  line-height: 1.4 !important;
+}
+
+/* Description styling */
+.driver-popover.driverjs-theme .driver-popover-description {
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  color: var(--driver-popover-text) !important;
+  opacity: 0.85 !important;
+  margin-bottom: 16px !important;
+}
+
+/* Progress text */
+.driver-popover.driverjs-theme .driver-popover-progress-text {
+  font-size: 12px !important;
+  color: var(--driver-popover-text) !important;
+  opacity: 0.6 !important;
+  margin-bottom: 12px !important;
+}
+
+/* Footer buttons container */
+.driver-popover.driverjs-theme .driver-popover-footer {
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: space-between !important;
+  margin-top: 8px !important;
+}
+
+/* Navigation buttons */
+.driver-popover.driverjs-theme .driver-popover-navigation-btns {
+  display: flex !important;
+  gap: 8px !important;
+}
+
+/* All buttons base style */
+.driver-popover.driverjs-theme button {
+  padding: 8px 16px !important;
+  border-radius: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  border: none !important;
+}
+
+/* Previous button */
+.driver-popover.driverjs-theme .driver-popover-prev-btn {
+  background-color: transparent !important;
+  color: var(--driver-popover-text) !important;
+  border: 1px solid rgba(59, 94, 61, 0.3) !important;
+}
+
+.driver-popover.driverjs-theme .driver-popover-prev-btn:hover {
+  background-color: rgba(59, 94, 61, 0.1) !important;
+}
+
+/* Next and Done buttons - primary style */
+.driver-popover.driverjs-theme .driver-popover-next-btn,
+.driver-popover.driverjs-theme .driver-popover-done-btn {
+  background-color: #3B5E3D !important;
+  color: white !important;
+}
+
+.driver-popover.driverjs-theme .driver-popover-next-btn:hover,
+.driver-popover.driverjs-theme .driver-popover-done-btn:hover {
+  background-color: #2d4a2f !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Close button */
+.driver-popover.driverjs-theme .driver-popover-close-btn {
+  position: absolute !important;
+  top: 12px !important;
+  right: 12px !important;
+  background: transparent !important;
+  color: var(--driver-popover-text) !important;
+  opacity: 0.5 !important;
+  padding: 4px !important;
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 6px !important;
+}
+
+.driver-popover.driverjs-theme .driver-popover-close-btn:hover {
+  opacity: 1 !important;
+  background-color: rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Arrow styling */
+.driver-popover.driverjs-theme .driver-popover-arrow {
+  border-color: var(--driver-popover-bg) !important;
+}
+
+.driver-popover.driverjs-theme .driver-popover-arrow-side-left {
+  border-right-color: var(--driver-popover-bg) !important;
+}
+
+.driver-popover.driverjs-theme .driver-popover-arrow-side-right {
+  border-left-color: var(--driver-popover-bg) !important;
+}
+
+.driver-popover.driverjs-theme .driver-popover-arrow-side-top {
+  border-bottom-color: var(--driver-popover-bg) !important;
+}
+
+.driver-popover.driverjs-theme .driver-popover-arrow-side-bottom {
+  border-top-color: var(--driver-popover-bg) !important;
+}
+
+/* Highlighted element styling */
+.driver-active-element {
+  z-index: 10000 !important;
+}
