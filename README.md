@@ -1,301 +1,48 @@
-# Tenant Template - Frontend
+# Trends Bird Admin Frontend
 
-A modern React frontend application built with TypeScript, Vite, Tailwind CSS, and comprehensive UI components.
+Frontend dashboard for the Trends Bird e-commerce admin assignment. The UI should demonstrate the backend modules end to end and stay focused on admin workflows only.
 
-## 🚀 Features
+## Project Summary
 
-- **React 19**: Latest React with hooks and functional components
-- **TypeScript**: Full TypeScript support with strict type checking
-- **Vite**: Fast build tool and development server
-- **Tailwind CSS**: Utility-first CSS framework
-- **Radix UI**: Accessible, unstyled UI components
-- **React Router**: Client-side routing
-- **Redux Toolkit**: State management with RTK Query
-- **React Hook Form**: Form handling with validation
-- **Zod**: Schema validation
-- **Framer Motion**: Animation library
-- **Recharts**: Data visualization
-- **Google Maps**: Maps integration
-- **Quill Editor**: Rich text editing
-- **Date Picker**: Date selection components
-- **File Upload**: Excel file processing
-- **Voice Assistant**: Vapi AI integration
-- **Theme Support**: Dark/light mode with dynamic theming
+This frontend is expected to cover the assignment screens and behavior:
 
-## 📋 Prerequisites
+- Login and session restoration
+- Sidebar-based dashboard shell with signed-in user and role
+- Permission, role, user, media, category, brand, attribute, and product screens
+- Permission-driven visibility for menu items and actions
+- List, form, loading, empty, error, and validation states
+- Transparent refresh-token retry handling on expired access tokens
 
-Before running this application, make sure you have the following installed:
+## Current Repository Notes
 
-- **Node.js** (v18 or higher)
-- **npm** or **yarn**
-- **Git**
+- The existing template includes many unrelated CRM-style integrations and pages.
+- Unnecessary features such as Vapi, Google Maps, extra analytics, and other non-assignment widgets should be removed from the project summary and implementation plan.
+- Keep the UI practical and complete rather than decorative.
 
-## 🛠️ Installation & Setup
+## Setup
 
-### 1. Clone the repository
+### Requirements
 
-```bash
-git clone <your-frontend-repo-url>
-cd Frontend
-```
+- Node.js LTS
+- npm
 
-### 2. Install dependencies
+### Environment
 
-```bash
-npm install
-```
-
-### 3. Environment Configuration
-
-Copy the example environment file and configure your variables:
+Copy the example file and point the app at the backend API:
 
 ```bash
 cp .env.example .env
 ```
 
-Edit the `.env` file with your actual values:
+### Scripts
 
-```env
-# Backend API Configuration
-VITE_BASE_URL=http://localhost:5000/api/v1
+- `npm run dev` - start the Vite dev server
+- `npm run build` - type-check and build for production
+- `npm run lint` - run ESLint
+- `npm run preview` - preview the production build
 
-# Vapi AI Voice Assistant Configuration (Optional)
-# Get these values from https://dashboard.vapi.ai
-VITE_VAPI_CLIENT_ID=your_vapi_client_id_here
-VITE_VAPI_ASSISTANT_ID=your_vapi_assistant_id_here
+## Environment Variables
 
-# Google Maps API Key (Optional)
-VITE_GOOGLE_MAPS_API_KEY=your_google_maps_api_key
-
-# Other API Keys as needed
-VITE_STRIPE_PUBLIC_KEY=your_stripe_public_key
-```
-
-### 4. Backend Connection
-
-Ensure your backend server is running on the URL specified in `VITE_BASE_URL`. The default is `http://localhost:5000/api/v1`.
-
-## 🏃‍♂️ Running the Application
-
-### Development Mode
-
-```bash
-npm run dev
-```
-
-The application will be available at `http://localhost:5173`.
-
-### Production Build
-
-```bash
-# Build for production
-npm run build
-
-# Preview production build locally
-npm run preview
-```
-
-### Other Scripts
-
-```bash
-# Lint the code
-npm run lint
-
-# Type checking
-npx tsc --noEmit
-```
-
-## 📁 Project Structure
-
-```
-src/
-├── assets/             # Static assets (images, icons)
-├── components/         # Reusable UI components
-│   ├── ui/            # Base UI components (buttons, inputs, etc.)
-│   ├── layout/        # Layout components (header, sidebar, etc.)
-│   ├── modals/        # Modal components
-│   ├── modules/       # Feature-specific components
-│   └── filters/       # Filter components
-├── config/            # Application configuration
-├── constants/         # Application constants
-├── context/           # React contexts
-├── hooks/             # Custom React hooks
-├── lib/              # Utility libraries and configurations
-├── pages/            # Page components
-│   ├── administration/
-│   ├── dashboard/
-│   ├── contacts/
-│   ├── emails/
-│   ├── settings/
-│   └── ...
-├── providers/        # Context providers
-├── redux/           # Redux store and slices
-│   └── features/    # Feature-specific slices
-├── routes/          # Routing configuration
-├── types/           # TypeScript type definitions
-├── utils/           # Utility functions
-├── validations/     # Form validation schemas
-├── App.tsx          # Main App component
-└── main.tsx         # Application entry point
-```
-
-## 🎨 UI Components
-
-The application uses a combination of:
-
-- **Radix UI**: Accessible, unstyled components
-- **Tailwind CSS**: Utility-first styling
-- **Custom Components**: Built on top of Radix UI
-- **Framer Motion**: Smooth animations and transitions
-
-### Key Components
-
-- **Sidebar Navigation**: Collapsible sidebar with route-based navigation
-- **Data Tables**: Sortable, filterable tables with pagination
-- **Forms**: Validated forms with error handling
-- **Modals**: Accessible modal dialogs
-- **Charts**: Interactive data visualization
-- **Date Pickers**: Date range selection
-- **File Uploads**: Drag-and-drop file handling
-- **Rich Text Editor**: Quill-based editor
-
-## 🔧 State Management
-
-The application uses Redux Toolkit for state management:
-
-- **Store**: Configured in `src/redux/store.ts`
-- **API Slices**: RTK Query for API calls
-- **Feature Slices**: Local state management
-- **Middleware**: Custom middleware for error handling
-
-### Key Features
-
-- **Authentication State**: User session management
-- **API Caching**: Automatic caching with RTK Query
-- **Error Handling**: Centralized error management
-- **Loading States**: Automatic loading indicators
-
-## 🎯 Routing
-
-React Router is configured for client-side routing:
-
-- **Public Routes**: Login, register, forgot password
-- **Protected Routes**: Dashboard, administration, etc.
-- **Role-based Access**: Permission-based route protection
-- **Dynamic Routes**: Parameter-based routing
-
-## 🔒 Authentication
-
-The application includes comprehensive authentication:
-
-- **JWT Token Management**: Access and refresh tokens
-- **Google OAuth**: Social login integration
-- **Password Reset**: Email-based password recovery
-- **Role-based Access**: Permission system
-- **Session Management**: Automatic token refresh
-
-## 📱 Responsive Design
-
-- **Mobile-first**: Designed for mobile devices
-- **Breakpoint System**: Tailwind CSS breakpoints
-- **Adaptive Layouts**: Components adapt to screen size
-- **Touch-friendly**: Optimized for touch interactions
-
-## 🔧 Environment Variables Reference
-
-| Variable | Description | Required | Example |
-|----------|-------------|----------|---------|
-| `VITE_BASE_URL` | Backend API base URL | Yes | `http://localhost:5000/api/v1` |
-| `VITE_VAPI_CLIENT_ID` | Vapi AI client ID | No | `your_vapi_client_id` |
-| `VITE_VAPI_ASSISTANT_ID` | Vapi AI assistant ID | No | `your_vapi_assistant_id` |
-| `VITE_GOOGLE_MAPS_API_KEY` | Google Maps API key | No | `your_google_maps_key` |
-| `VITE_STRIPE_PUBLIC_KEY` | Stripe public key | No | `pk_test_...` |
-
-## 🔍 Troubleshooting
-
-### Common Issues
-
-1. **API Connection Error**
-   - Verify `VITE_BASE_URL` points to running backend
-   - Check CORS configuration in backend
-   - Ensure backend is accessible
-
-2. **Build Errors**
-   - Clear node_modules: `rm -rf node_modules package-lock.json && npm install`
-   - Check TypeScript errors: `npx tsc --noEmit`
-   - Verify all dependencies are installed
-
-3. **Styling Issues**
-   - Clear Tailwind cache: Delete `.turbo` and `dist` folders
-   - Check for conflicting CSS
-   - Verify Tailwind configuration
-
-4. **Authentication Issues**
-   - Check token expiration
-   - Verify API endpoints
-   - Check network requests in browser devtools
-
-### Development Tips
-
-- Use React DevTools for component debugging
-- Use Redux DevTools for state debugging
-- Check browser console for errors and warnings
-- Use network tab to debug API calls
-- Use `npm run lint` to catch code issues
-
-## 🚀 Deployment
-
-### Vercel (Recommended)
-
-1. Connect your repository to Vercel
-2. Configure environment variables in Vercel dashboard
-3. Deploy automatically on push to main branch
-
-### Manual Build
-
-```bash
-# Build for production
-npm run build
-
-# Serve static files from dist/ folder
-```
-
-### Environment Variables for Production
-
-Make sure to set all required environment variables in your deployment platform:
-
-- `VITE_BASE_URL`: Your production backend URL
-- Other API keys as configured in your `.env` file
-
-## 📝 Development Guidelines
-
-### Code Style
-
-- Use TypeScript for all new code
-- Follow React best practices
-- Use functional components with hooks
-- Implement proper error boundaries
-- Write descriptive component names
-
-### Component Development
-
-- Keep components small and focused
-- Use proper TypeScript typing
-- Implement proper loading and error states
-- Make components reusable when possible
-- Document complex components
-
-### Testing (Future Enhancement)
-
-- Unit tests for utility functions
-- Component tests for UI components
-- Integration tests for API calls
-- E2E tests for critical user flows
-
-## 📄 License
-
-This project is licensed under the ISC License.
-
-## 🤝 Support
-
-For issues and questions, please create an issue in the repository or contact the development team.
+| Variable        | Purpose              |
+| --------------- | -------------------- |
+| `VITE_BASE_URL` | Backend API base URL |
