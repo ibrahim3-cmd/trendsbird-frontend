@@ -1,8 +1,5 @@
 // utils.ts
 
-import { AssignedUserType, LoadingState, TicketType } from "@/types/support.type";
-
-
 export const getStatusColor = (status: string): string => {
   const statusColors: Record<string, string> = {
     Pending: "bg-orange-100 text-orange-800",
@@ -15,7 +12,7 @@ export const getStatusColor = (status: string): string => {
 };
 
 export const getCreatorInfo = (
-  ticket: TicketType
+  ticket: any
 ): { name: string; email: string } => {
   const creatorInfo = ticket?.createdBy || ticket?.publicUserInfo;
 
@@ -32,7 +29,7 @@ export const getCreatorInfo = (
   return { name, email };
 };
 
-export const getAssignedUserName = (user?: AssignedUserType): string => {
+export const getAssignedUserName = (user?: any): string => {
   if (!user) return "";
   if (user.firstName) {
     return `${user.firstName} ${user.lastName || ""}`.trim();
@@ -62,7 +59,7 @@ export const formatTime = (dateString?: string): string => {
   });
 };
 
-export const getLoadingMessage = (state?: LoadingState): string => {
+export const getLoadingMessage = (state?: string): string => {
   switch (state) {
     case "updating":
       return "🔄 Updating status...";

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/redux/baseApi";
-import { ChangePasswordBody, ChangePasswordResponse, CreateSupportAgentPayload, ForgotPasswordPayload, IResponse, ISendOtp, IVerifyOtp, ResetPasswordPayload, SupportAgentResponse, UpdateSupportAgentPayload, VerifyResetOtpPayload } from "@/types";
+import { ChangePasswordBody, ChangePasswordResponse, ForgotPasswordPayload, IResponse, ISendOtp, IVerifyOtp, ResetPasswordPayload, VerifyResetOtpPayload } from "@/types";
 
 
 export const authApi = baseApi.injectEndpoints({
@@ -44,7 +44,7 @@ loginByEmailAndRole: builder.mutation({
     }),
     register: builder.mutation({
       query: (userInfo) => ({
-        url: "/user/register",
+        url: "/users",
         method: "POST",
         data: userInfo,
       }),
@@ -65,7 +65,7 @@ loginByEmailAndRole: builder.mutation({
     }),
     userInfo: builder.query({
       query: () => ({
-        url: "/user/me",
+        url: "/users/me",
         method: "GET",
       }),
       providesTags: ["USER"],
@@ -110,8 +110,8 @@ loginByEmailAndRole: builder.mutation({
       }),
     }),
 
-    // Create Support Agent
-    createSupportAgent: builder.mutation<SupportAgentResponse, CreateSupportAgentPayload>({
+    // Create/Update Support Agent - kept as any to simplify types after pruning
+    createSupportAgent: builder.mutation<any, any>({
       query: (body) => ({
         url: "/user/create-support-agent",
         method: "POST",
@@ -119,10 +119,7 @@ loginByEmailAndRole: builder.mutation({
       }),
       invalidatesTags: ["USER"],
     }),
-    updateSupportAgent: builder.mutation<
-      SupportAgentResponse,
-      { id: string; body: UpdateSupportAgentPayload }
-    >({
+    updateSupportAgent: builder.mutation<any, { id: string; body: any }>({
       query: ({ id, body }) => ({
         url: `/user/${id}`,
         method: "PATCH",

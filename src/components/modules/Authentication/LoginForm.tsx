@@ -44,8 +44,16 @@ export function LoginForm({
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
     const formData = { email: values.email as string, password: values.password as string };
     try {
-      // 1) server sets HttpOnly cookies here
-      await login(formData).unwrap();
+      // 1) perform login and capture tokens
+      const loginRes = await login(formData).unwrap();
+      const payload = (loginRes as any)?.data || loginRes;
+
+      // store token for axios interceptor
+      const accessToken = payload?.accessToken || payload?.data?.accessToken;
+      if (accessToken) {
+        localStorage.setItem("token", accessToken);
+      }
+
       toast.success("Logged in successfully");
 
       // 2) immediately confirm session & get role

@@ -14,7 +14,6 @@ import TermsAndConditions from "@/pages/TermsAndConditions";
 import PrivacyPolicy from "@/pages/PrivacyPolicy";
 import ForgotPasswordPage from "@/pages/ForgotPassword";
 import ResetPassword from "@/pages/ResetPassword";
-import UserFeaturesManagement from "@/pages/Admin/user/UserFeaturesManagement";
 import ChangePassword from "@/pages/shared/ChangePassword";
 import ProfileSettings from "@/pages/shared/ProfileSettings";
 import { sidebarItems } from "./sidebarItems";

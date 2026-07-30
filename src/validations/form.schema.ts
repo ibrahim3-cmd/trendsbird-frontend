@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { FormFieldType } from "@/types/form.type";
 
 // Field Option Schema
 const fieldOptionSchema = z.object({
@@ -29,7 +28,7 @@ const conditionalLogicSchema = z.object({
 const formFieldSchema = z.object({
     _id: z.string().optional(),
     label: z.string().trim().min(1, "Field label is required").max(200, "Label too long"),
-    fieldType: z.nativeEnum(FormFieldType),
+    fieldType: z.string(),
     placeholder: z.string().trim().max(200, "Placeholder too long").optional(),
     helpText: z.string().trim().max(500, "Help text too long").optional(),
     defaultValue: z.any().optional(),
