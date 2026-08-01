@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
-import { useLazyUserInfoQuery, useLoginMutation } from "@/redux/features/auth/auth.api";
+import { useLazyUserInfoQuery, useLoginMutation, useResetDatabaseMutation } from "@/redux/features/auth/auth.api";
 import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -19,10 +19,13 @@ import {
   Lock,
   Eye,
   EyeOff,
-  ShieldCheck,
   Loader2,
   LogIn,
+  Trash2,
+  Settings,
 } from "lucide-react";
+import { DEV_DEFAULTS, DevUserType } from "@/constants/devDefaults";
+import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import * as React from "react";
 
 export function LoginForm({
@@ -32,88 +35,163 @@ export function LoginForm({
   const navigate = useNavigate();
   const form = useForm({
     defaultValues: {
-      email: "superadmin@yopmail.com",
-      password: "12345678",
+      email: DEV_DEFAULTS.SUPER_ADMIN_EMAIL,
+      password: DEV_DEFAULTS.SUPER_ADMIN_PASSWORD,
     },
   });
 
   const [login, { isLoading: isLoggingIn }] = useLoginMutation();
   const [getMe, { isFetching: isGettingMe }] = useLazyUserInfoQuery();
+  const [resetDatabase, { isLoading: isResettingDatabase }] = useResetDatabaseMutation();
   const [showPassword, setShowPassword] = React.useState(false);
+  const [devUser, setDevUser] = React.useState<DevUserType>("admin");
 
   const onSubmit: SubmitHandler<FieldValues> = async (values) => {
     const formData = { email: values.email as string, password: values.password as string };
     try {
-      // 1) perform login and capture tokens
       const loginRes = await login(formData).unwrap();
       const payload = (loginRes as any)?.data || loginRes;
 
-      // store token for axios interceptor
       const accessToken = payload?.accessToken || payload?.data?.accessToken;
       if (accessToken) {
         localStorage.setItem("token", accessToken);
       }
 
-      toast.success("Logged in successfully");
+      const session = payload?.session;
+      if (session?.permissions) {
+        localStorage.setItem("permissions", JSON.stringify(session.permissions));
+      }
+      if (session?.role) {
+        localStorage.setItem("role", session.role);
+      }
 
-      // 2) immediately confirm session & get role
-      const me = await getMe(undefined).unwrap(); // { success, data: { _id, role, ... } }
+      const me = await getMe(undefined).unwrap();
       const user = me?.data;
-      // console.log("user", user);
 
-
-      if (!user?._id) {
+      if (!user?.id) {
         toast.error("Could not fetch your session. Please try again.");
         return;
       }
 
-      if (user.isVerified === false) {
-        toast.error("User is not verified");
-        navigate("/verify", { state: values.email });
-        return
-      }
+      localStorage.setItem("permissions", JSON.stringify(user.permissions ?? []));
+      if (user.role) localStorage.setItem("role", user.role);
 
-      // Tour is now automatically controlled by backend hasCompletedOnboarding field
-      // No need to manually queue it here
+      toast.success("Logged in successfully");
 
-      // 3) navigate by role
-      const role = user.role;
-      if (role === "CLIENT") {
-        navigate("/client-dashboard", { replace: true });
-      } else if (role === "ADMIN" || role === 'SUPER_ADMIN') {
-        navigate("/dashboard", { replace: true });
-      }
-      else if(role==='CREW'){
-        navigate("/crew-dashboard", { replace: true });
-      }
-      
+      navigate("/dashboard", { replace: true });
     } catch (err: any) {
-      // console.error(err);
       const msg = err?.data?.message || "Login failed. Please try again.";
       toast.error(msg);
-      if (msg === "User is not verified")
-        navigate("/verify", { state: values.email });
+    }
+  };
+
+  const handleResetDatabase = async () => {
+    const confirmed = window.confirm(
+      "This will remove all application data, recreate the schema, and reseed the admin account. Continue?"
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const secret = window.prompt("Enter the database reset secret");
+    if (!secret) {
+      return;
+    }
+
+    try {
+      await resetDatabase({ secret }).unwrap();
+      localStorage.removeItem("token");
+      localStorage.removeItem("permissions");
+      localStorage.removeItem("role");
+      toast.success("Database reset and reseeded successfully");
+    } catch (err: any) {
+      const msg = err?.data?.message || "Database reset failed. Please try again.";
+      toast.error(msg);
+    }
+  };
+
+  const switchDevUser = (type: DevUserType) => {
+    setDevUser(type);
+    if (type === "admin") {
+      form.setValue("email", DEV_DEFAULTS.SUPER_ADMIN_EMAIL);
+      form.setValue("password", DEV_DEFAULTS.SUPER_ADMIN_PASSWORD);
+    } else {
+      form.setValue("email", DEV_DEFAULTS.CATALOG_USER_EMAIL);
+      form.setValue("password", DEV_DEFAULTS.CATALOG_USER_PASSWORD);
     }
   };
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      {/* Header */}
-      <div className="flex flex-col items-center gap-2 text-center">
-        <div className="inline-flex items-center gap-2 rounded-full bg-system-secondary/20 px-3 py-1 text-xs font-medium text-system-secondary">
-          <ShieldCheck className="h-3.5 w-3.5" />
-          Bank‑grade security
-        </div>
-        <h1 className="text-2xl font-bold tracking-tight mt-1">Welcome back</h1>
-        <p className="text-balance text-sm text-muted-foreground">
-          Log in to manage your wallet, transfers, and cash‑in/cash‑out.
-        </p>
+    <div className={cn("flex flex-col gap-6 relative", className)} {...props}>
+      {/* Top-right settings (popover) */}
+      <div className="absolute right-2 top-2">
+        <Popover>
+          <PopoverTrigger asChild>
+            <button type="button" aria-label="Settings" className="p-2 rounded hover:bg-muted/50 transition">
+              <Settings className="h-5 w-5" />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent side="bottom" align="end" className="w-60">
+            <div className="text-sm text-muted-foreground mb-2">Dangerous actions</div>
+            <Button
+              type="button"
+              variant="destructive"
+              disabled={isLoggingIn || isGettingMe || isResettingDatabase}
+              onClick={async () => {
+                await handleResetDatabase();
+              }}
+              className="w-full"
+            >
+              {isResettingDatabase ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Resetting database…
+                </>
+              ) : (
+                <>
+                  <Trash2 className="mr-2 h-4 w-4" /> Reset database
+                </>
+              )}
+            </Button>
+          </PopoverContent>
+        </Popover>
       </div>
 
-      {/* Form */}
+      <div className="flex flex-col items-center gap-2 text-center">
+
+        <h1 className="text-2xl font-bold tracking-tight mt-1">Welcome back</h1>
+        <p className="text-balance text-sm text-muted-foreground">
+          Log in to manage users, roles, and permissions.
+        </p>
+        <div className="mt-2 flex items-center gap-3">
+          <span className="text-sm">Login in as</span>
+          <div className="flex items-center gap-2 rounded-md border bg-muted/5 p-1">
+            <button
+              type="button"
+              onClick={() => switchDevUser("catalog")}
+              className={cn(
+                "px-3 py-1 rounded text-sm",
+                devUser === "catalog" ? "bg-system-primary text-system-primary-text" : "bg-transparent"
+              )}
+            >
+              Catalog
+            </button>
+            <button
+              type="button"
+              onClick={() => switchDevUser("admin")}
+              className={cn(
+                "px-3 py-1 rounded text-sm",
+                devUser === "admin" ? "bg-system-primary text-system-primary-text" : "bg-transparent"
+              )}
+            >
+              Admin
+            </button>
+          </div>
+        </div>
+      </div>
+
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          {/* Email */}
           <FormField
             control={form.control}
             name="email"
@@ -133,7 +211,7 @@ export function LoginForm({
                       <Mail className="h-4 w-4" />
                     </span>
                     <Input
-                      placeholder="john@example.com"
+                      placeholder={DEV_DEFAULTS.SUPER_ADMIN_EMAIL}
                       {...field}
                       value={field.value || ""}
                       className="pl-9 focus-visible:border-system-primary focus-visible:ring-2 focus-visible:ring-system-primary"
@@ -145,14 +223,10 @@ export function LoginForm({
             )}
           />
 
-          {/* Password */}
           <FormField
             control={form.control}
             name="password"
-            rules={{
-              required: "Password is required",
-              // minLength: { value: 8, message: "Min 8 characters" },
-            }}
+            rules={{ required: "Password is required" }}
             render={({ field }) => (
               <FormItem>
                 <FormLabel>Password</FormLabel>
@@ -163,24 +237,18 @@ export function LoginForm({
                     </span>
                     <Input
                       type={showPassword ? "text" : "password"}
-                      placeholder="********"
+                      placeholder={"********"}
                       {...field}
                       value={field.value || ""}
                       className="pl-9 pr-10 focus-visible:border-system-primary focus-visible:ring-2 focus-visible:ring-system-primary"
                     />
                     <button
                       type="button"
-                      aria-label={
-                        showPassword ? "Hide password" : "Show password"
-                      }
+                      aria-label={showPassword ? "Hide password" : "Show password"}
                       onClick={() => setShowPassword((s) => !s)}
                       className="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-muted-foreground hover:text-foreground transition"
                     >
-                      {showPassword ? (
-                        <EyeOff className="h-4 w-4" />
-                      ) : (
-                        <Eye className="h-4 w-4" />
-                      )}
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
                   </div>
                 </FormControl>
@@ -189,21 +257,6 @@ export function LoginForm({
             )}
           />
 
-          {/* Actions */}
-          <div className="flex items-center justify-between pt-1">
-            <label className="flex items-center gap-2 text-xs text-muted-foreground select-none">
-              <input type="checkbox" className="h-4 w-4 rounded border-input" />
-              Remember me
-            </label>
-            <Link
-              to="/forgot-password"
-              className="text-xs underline underline-offset-4 hover:opacity-80 text-system-primary"
-            >
-              Forgot password?
-            </Link>
-          </div>
-
-          {/* Submit */}
           <Button
             type="submit"
             disabled={isLoggingIn || isGettingMe}
@@ -211,7 +264,7 @@ export function LoginForm({
           >
             {isLoggingIn || isGettingMe ? (
               <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Loging in…
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Logging in…
               </>
             ) : (
               <>
@@ -219,34 +272,17 @@ export function LoginForm({
               </>
             )}
           </Button>
+
+          {/* Reset moved to settings menu */}
         </form>
       </Form>
 
-      {/* Divider */}
-      {/* <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-        <span className="relative z-10 bg-white/70 dark:bg-white/10 backdrop-blur px-2 text-muted-foreground">
-          Or continue with
-        </span>
-      </div> */}
-
-      {/* Social */}
-      {/* <Button
-        onClick={() => window.open(`${config.baseUrl}/auth/google`)}
-        type="button"
-        variant="outline"
-        className="w-full cursor-pointer bg-white/80 dark:bg-white/5 hover:bg-white/90 dark:hover:bg-white/10"
-      >
-        <Chrome className="mr-2 h-4 w-4" />
-        Login with Google
-      </Button> */}
-
-      {/* Switch */}
-      <div className="text-center text-sm">
-        Don&apos;t have an account?{" "}
-        <Link to="/register" replace className="underline underline-offset-4 text-system-primary hover:text-system-primary/80">
-          Register
+      {/* <div className="text-center text-sm">
+        Back to{" "}
+        <Link to="/" className="underline underline-offset-4 text-system-primary hover:text-system-primary/80">
+          Home
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 }

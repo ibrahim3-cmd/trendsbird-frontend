@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import Logo from "@/assets/icons/Logo";
 import { LoginForm } from "@/components/modules/Authentication/LoginForm";
 import { name } from "@/constants/name";
 import { bg } from "@/constants";
@@ -9,10 +8,9 @@ export default function Login() {
     <div className={`min-h-svh grid ${bg}`}>
       {/* Left: Form side */}
       <div className="relative flex flex-col p-6 md:p-10">
-        {/* Top logo */}
         <div className="flex justify-center md:justify-start">
           <Link to="/" className="flex items-center gap-2 font-medium">
-            <Logo />
+            <span className="text-lg font-semibold">trends bird</span>
           </Link>
         </div>
 
@@ -23,7 +21,7 @@ export default function Login() {
               <LoginForm />
             </div>
             {/* Small footnote */}
-            <p className="mt-6 text-center text-xs text-muted-foreground">
+            {/* <p className="mt-6 text-center text-xs text-muted-foreground">
               By continuing, you agree to {name}{" "}
               <Link to="/terms-conditions" className="underline hover:text-foreground">
               Terms & Conditions
@@ -33,7 +31,7 @@ export default function Login() {
               Privacy Policy
               </Link>
               .
-            </p>
+            </p> */}
           </div>
         </div>
       </div>

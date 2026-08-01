@@ -1,21 +1,19 @@
-import { PageHeader } from "@/components/ui/PageHeader"
-import { ChartNoAxesCombined } from "lucide-react"
+import { PageHeader } from "@/components/ui/PageHeader";
+import { ChartNoAxesCombined } from "lucide-react";
 
 const DashboardPage = () => {
   return (
-    <div className="">
-        <PageHeader
-          title="Admin Dashboard"
-          description="System revenue summary and user/transaction analytics."
-          icon={ChartNoAxesCombined}
-        />
-        <div className="flex items-center justify-center py-12">
-          <div className="text-center">
-            <p className="font-bold mb-4">Dashboard Analytics is coming soon...</p>
-          </div>
-        </div>
+    <div>
+      <PageHeader
+        title="Admin Dashboard"
+        description="Overview of your admin workspace."
+        icon={ChartNoAxesCombined}
+      />
+      <div className="rounded-b-lg border border-t-0 p-8 text-muted-foreground">
+        Dashboard analytics coming soon. Use the sidebar to manage users, roles, and permissions.
       </div>
-  )
-}
+    </div>
+  );
+};
 
-export default DashboardPage
+export default DashboardPage;
