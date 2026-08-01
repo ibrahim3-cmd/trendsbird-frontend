@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useGetMediaQuery } from "@/redux/features/media/media.api";
-import { Image as ImageIcon, Check } from "lucide-react";
+import { Image as ImageIcon, Check, UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useUploadMediaMutation } from "@/redux/features/media/media.api";
 
 interface MediaPickerProps {
   open: boolean;
@@ -13,7 +14,9 @@ interface MediaPickerProps {
 }
 
 export function MediaPicker({ open, onOpenChange, onSelect, multiple = false }: MediaPickerProps) {
-  const { data, isLoading } = useGetMediaQuery({});
+  const { data, isLoading, refetch } = useGetMediaQuery({});
+  const [uploadMedia, { isLoading: isUploading }] = useUploadMediaMutation();
+  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
 
   const toggleSelect = (id: number) => {
@@ -25,10 +28,24 @@ export function MediaPicker({ open, onOpenChange, onSelect, multiple = false }: 
   };
 
   const handleConfirm = () => {
-    const selectedMedia = data?.data?.media?.filter((m: any) => selectedIds.includes(m.id)) || [];
+    const selectedMedia = data?.media?.filter((m: any) => selectedIds.includes(m.id)) || [];
     onSelect(selectedMedia);
     onOpenChange(false);
     setSelectedIds([]);
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.length) return;
+    const formData = new FormData();
+    Array.from(e.target.files).forEach((file) => formData.append("files", file));
+    try {
+      await uploadMedia(formData).unwrap();
+      // refresh list
+      refetch();
+      if (fileInputRef.current) fileInputRef.current.value = "";
+    } catch (err) {
+      console.error("Upload failed", err);
+    }
   };
 
   return (
@@ -39,11 +56,18 @@ export function MediaPicker({ open, onOpenChange, onSelect, multiple = false }: 
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto py-4">
+          <div className="mb-4 flex items-center justify-end gap-2">
+            <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} accept="image/*,video/*,application/pdf" />
+            <button className="btn btn-outline flex items-center gap-2 text-sm" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+              <UploadCloud className="h-4 w-4" />
+              {isUploading ? "Uploading..." : "Upload"}
+            </button>
+          </div>
           {isLoading ? (
             <div>Loading...</div>
           ) : (
             <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
-              {data?.data?.media?.map((m: any) => {
+              {data?.media?.map((m: any) => {
                 const isSelected = selectedIds.includes(m.id);
                 return (
                   <div
@@ -74,7 +98,7 @@ export function MediaPicker({ open, onOpenChange, onSelect, multiple = false }: 
                   </div>
                 );
               })}
-              {data?.data?.media?.length === 0 && (
+              {data?.media?.length === 0 && (
                 <div className="col-span-full py-12 text-center text-muted-foreground">
                   No media found. Go to Media Library to upload.
                 </div>
