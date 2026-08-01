@@ -1,69 +1,50 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { baseApi } from "@/redux/baseApi";
-import { ChangePasswordBody, ChangePasswordResponse, ForgotPasswordPayload, IResponse, ISendOtp, IVerifyOtp, ResetPasswordPayload, VerifyResetOtpPayload } from "@/types";
+import {
+  ChangePasswordBody,
+  ChangePasswordResponse,
+  ForgotPasswordPayload,
+  IResponse,
+  ResetPasswordPayload,
+} from "@/types";
+import { IAuthUser } from "@/types/user.type";
 
+const persistSession = (user?: IAuthUser) => {
+  if (!user) return;
+  localStorage.setItem("permissions", JSON.stringify(user.permissions ?? []));
+  if (user.role) localStorage.setItem("role", user.role);
+};
 
 export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-login: builder.mutation({
-  query: (userInfo) => ({
-    url: "/auth/login",
-    method: "POST",
-    data: userInfo,
-  }),
-  invalidatesTags: ["USER"],
-  async onQueryStarted(_, { queryFulfilled }) {
-    // Clear any old data before login
-    localStorage.removeItem("features");
-    sessionStorage.removeItem("features");
-    
-    await queryFulfilled;
-  },
-}),
-loginByEmailAndRole: builder.mutation({
-  query: (userInfo) => ({
-    url: "/auth/login-by-email-role",
-    method: "POST",
-    data: userInfo,
-  }),
-  invalidatesTags: ["USER"],
-  async onQueryStarted(_, { queryFulfilled }) {
-    // Clear any old data before login
-    localStorage.removeItem("features");
-    sessionStorage.removeItem("features");
-    
-    await queryFulfilled;
-  },
-}),
-    logout: builder.mutation({
+    login: builder.mutation<any, { email: string; password: string }>({
+      query: (userInfo) => ({
+        url: "/auth/login",
+        method: "POST",
+        data: userInfo,
+      }),
+      invalidatesTags: ["USER"],
+      async onQueryStarted(_, { queryFulfilled }) {
+        localStorage.removeItem("permissions");
+        localStorage.removeItem("role");
+        await queryFulfilled;
+      },
+    }),
+    logout: builder.mutation<void, void>({
       query: () => ({
         url: "/auth/logout",
         method: "POST",
       }),
       invalidatesTags: ["USER"],
     }),
-    register: builder.mutation({
-      query: (userInfo) => ({
-        url: "/users",
+    resetDatabase: builder.mutation<IResponse<{ permissionsSeeded: number; adminRoleName: string; userWasCreated: boolean }>, { secret: string }>({
+      query: (body) => ({
+        url: "/maintenance/reset-database",
         method: "POST",
-        data: userInfo,
+        data: body,
       }),
     }),
-    sendOtp: builder.mutation<IResponse<null>, ISendOtp>({
-      query: (userInfo) => ({
-        url: "/otp/send",
-        method: "POST",
-        data: userInfo,
-      }),
-    }),
-    verifyOtp: builder.mutation<IResponse<null>, IVerifyOtp>({
-      query: (userInfo) => ({
-        url: "/otp/verify",
-        method: "POST",
-        data: userInfo,
-      }),
-    }),
-    userInfo: builder.query({
+    userInfo: builder.query<IResponse<IAuthUser>, null | undefined>({
       query: () => ({
         url: "/users/me",
         method: "GET",
@@ -72,25 +53,16 @@ loginByEmailAndRole: builder.mutation({
       async onQueryStarted(_, { queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
-          // API returns { statusCode, success, message, data }
-          const features = data?.data?.featureAccess ?? [];
-          localStorage.setItem("features", JSON.stringify(features));
-        } catch (error) {
-          console.error("Failed to fetch user info:", error);
-          localStorage.removeItem("features"); // reset if error
+          persistSession(data?.data);
+        } catch {
+          localStorage.removeItem("permissions");
+          localStorage.removeItem("role");
         }
       },
     }),
     forgotPassword: builder.mutation<IResponse<null>, ForgotPasswordPayload>({
       query: (body) => ({
         url: "/auth/forgot-password",
-        method: "POST",
-        data: body,
-      }),
-    }),
-    verifyResetOtp: builder.mutation<IResponse<null>, VerifyResetOtpPayload>({
-      query: (body) => ({
-        url: "/auth/verify-reset-otp",
         method: "POST",
         data: body,
       }),
@@ -109,40 +81,16 @@ loginByEmailAndRole: builder.mutation({
         data: body,
       }),
     }),
-
-    // Create/Update Support Agent - kept as any to simplify types after pruning
-    createSupportAgent: builder.mutation<any, any>({
-      query: (body) => ({
-        url: "/user/create-support-agent",
-        method: "POST",
-        data:body,
-      }),
-      invalidatesTags: ["USER"],
-    }),
-    updateSupportAgent: builder.mutation<any, { id: string; body: any }>({
-      query: ({ id, body }) => ({
-        url: `/user/${id}`,
-        method: "PATCH",
-        data:body,
-      }),
-      invalidatesTags: ["USER"],
-    }),
   }),
 });
 
 export const {
-  useRegisterMutation,
   useLoginMutation,
-  useLoginByEmailAndRoleMutation,
-  useSendOtpMutation,
-  useVerifyOtpMutation,
+  useResetDatabaseMutation,
   useUserInfoQuery,
   useLogoutMutation,
   useForgotPasswordMutation,
-  useVerifyResetOtpMutation,
   useResetPasswordMutation,
   useLazyUserInfoQuery,
   useChangePasswordMutation,
-  useCreateSupportAgentMutation,
-  useUpdateSupportAgentMutation
 } = authApi;

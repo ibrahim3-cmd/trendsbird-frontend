@@ -1,13 +1,9 @@
-import { ComponentType, ReactNode } from "react";
-
-export type { ISendOtp, IVerifyOtp, ILogin, ForgotPasswordPayload, ResetPasswordPayload, ChangePasswordBody, ChangePasswordResponse, VerifyResetOtpPayload } from "./auth.type";
-export type { IsActive, IWallet, IUser, IUserFeatureAccess, IPaginatedMeta, ApiEnvelope, GetUserQuery, UserListResponse, UpdateMePayload, UpdateMeResponse, StorageUnit, IStorageUsage } from "./user.type";
-export type { IDashboardAnalytics, IAnalyticsQuery, IDashboardAnalyticsResponse, IConfigurationStatus, IConfigurationStatusResponse } from "./analytics.type";
+import type { ComponentType, ReactNode } from "react";
 
 export interface IResponse<T> {
-  statusCode: number;
-  success: boolean;
-  message: string;
+  statusCode?: number;
+  success?: boolean;
+  message?: string;
   data: T;
 }
 
@@ -17,12 +13,16 @@ export interface ISidebarItem {
     title: string;
     url: string;
     component: ComponentType;
-    key: string
-    icon?: React.ComponentType<{ className?: string; strokeWidth?: number }>;
+    key: string;
+    permission?: string;
+    icon?: ComponentType<{ className?: string; strokeWidth?: number }>;
   }[];
 }
 
-export type TRole = "SUPER_ADMIN" | "ADMIN" | "ORG_ADMIN" | "MANAGER" | "CREW" | "CLIENT";
+export type { ISendOtp, IVerifyOtp, ILogin, ForgotPasswordPayload, ResetPasswordPayload, ChangePasswordBody, ChangePasswordResponse, VerifyResetOtpPayload } from "./auth.type";
+export type { IUser, IAuthUser, CreateUserPayload, UpdateUserPayload } from "./user.type";
+export type { IRole, CreateRolePayload, UpdateRolePayload } from "./role.type";
+export type { IPermission, CreatePermissionPayload, UpdatePermissionPayload } from "./permission.type";
 
 export interface IProps {
   children: ReactNode;

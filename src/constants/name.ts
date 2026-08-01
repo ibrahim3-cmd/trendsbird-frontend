@@ -1,1 +1,1 @@
-export const name = "Arla";
+export const name = "Trendsbird";
