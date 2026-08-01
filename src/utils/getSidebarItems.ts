@@ -1,18 +1,16 @@
-import { sidebarItems } from "@/routes/sidebarItems";
+import { sidebarItems } from "@/routes/sidebarItems.tsx";
 
-export const getSidebarItems = (features: any[] = []) => {
-  const items = [...sidebarItems]
+const SUPERADMIN_ROLE = "superadmin";
 
-  // Filter items based on features with active view permission
-  const allowedKeys = features
-    .filter(feature => {
-      // Check if view action exists and is active
-      const viewAction = feature.actions?.find((action: any) => action.value === "view");
-      return viewAction && viewAction.isActive === true;
-    })
-    .map(f => f.key);
-  
-  items[0].items = items[0].items.filter(item => allowedKeys.includes(item.key));
+export const getSidebarItems = (permissions: string[] = [], role?: string | null) => {
+  const isSuperAdmin = role?.toLowerCase() === SUPERADMIN_ROLE;
 
-  return items;
+  return sidebarItems.map((section) => ({
+    ...section,
+    items: section.items.filter((item) => {
+      if (isSuperAdmin) return true;
+      if (!item.permission) return true;
+      return permissions.includes(item.permission);
+    }),
+  }));
 };

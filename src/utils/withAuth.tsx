@@ -5,26 +5,22 @@ import { Navigate, useLocation } from "react-router-dom";
 
 export const withAuth = (Component: ComponentType) => {
   return function AuthWrapper() {
-    const { data, isLoading, isFetching, error } = useUserInfoQuery(null);
+    const { data, isLoading, isFetching, error } = useUserInfoQuery(undefined);
     const location = useLocation();
 
     if (isLoading || isFetching) return null;
 
     const user = data?.data;
-    const features = user?.featureAccess || [];
-    // console.log("features", features );
-    localStorage.setItem("features", JSON.stringify(features));
-    if (error || !user?._id) {
-      return <Navigate to="/login" replace state={{ from: location }} />;
+    if (user?.permissions) {
+      localStorage.setItem("permissions", JSON.stringify(user.permissions));
+    }
+    if (user?.role) {
+      localStorage.setItem("role", user.role);
     }
 
-    // if (allowedRoles) {
-    //   const allowed = Array.isArray(allowedRoles) ? allowedRoles : [allowedRoles];
-    //   const userRole = user?.role as TRole | undefined;
-    //   if (!userRole || !allowed.includes(userRole)) {
-    //     return <Navigate to="/unauthorized" replace />;
-    //   }
-    // }
+    if (error || !user?.id) {
+      return <Navigate to="/login" replace state={{ from: location }} />;
+    }
 
     return <Component />;
   };

@@ -16,9 +16,10 @@ interface PageHeaderProps {
   icon: LucideIcon;
   tabs?: TabItem[];
   className?: string;
+  action?: ReactNode;
 }
 
-export function PageHeader({ title, description, icon: Icon, tabs, className }: PageHeaderProps) {
+export function PageHeader({ title, description, icon: Icon, tabs, className, action }: PageHeaderProps) {
   const [searchParams, setSearchParams] = useSearchParams();
 
   // Get the tab from URL or default to first tab
@@ -54,21 +55,23 @@ export function PageHeader({ title, description, icon: Icon, tabs, className }: 
   return (
     <div className={cn("w-full", className)}>
       {/* Header with Icon and Title */}
-      <div className="flex items-end gap-3 px-6 py-3 border rounded-t-lg">
-        <div className="flex items-center justify-center w-9 h-9 bg-primary rounded-lg">
-          <Icon className="w-6 h-6 text-primary-text" />
+      <div className="flex items-end justify-between gap-3 px-6 py-3 border rounded-t-lg">
+        <div className="flex items-end gap-3">
+          <div className="flex items-center justify-center w-9 h-9 bg-primary rounded-lg">
+            <Icon className="w-6 h-6 text-primary-text" />
+          </div>
+          <div>
+            <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+              {title}
+            </h1>
+            {description && (
+              <p className="mt-[-2px] text-xs text-gray-600 dark:text-gray-400">
+                {description}
+              </p>
+            )}
+          </div>
         </div>
-        <div>
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {title}
-          </h1>
-          {description && (
-            <p className="mt-[-2px] text-xs text-gray-600 dark:text-gray-400">
-              {description}
-            </p>
-          )}
-        </div>
-
+        {action}
       </div>
 
       {/* Border */}

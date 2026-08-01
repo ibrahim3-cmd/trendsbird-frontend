@@ -2,25 +2,23 @@ import React from "react";
 import { usePermission } from "@/hooks/usePermission";
 
 interface PermissionGateProps {
-    feature: string;
-    action: string;
-    children: React.ReactNode;
-    fallback?: React.ReactNode;
+  permission: string;
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
 }
 
 const PermissionGate: React.FC<PermissionGateProps> = ({
-    feature,
-    action,
-    children,
-    fallback = null,
+  permission,
+  children,
+  fallback = null,
 }) => {
-    const { can } = usePermission();
+  const { hasAccess } = usePermission();
 
-    if (!can(feature, action)) {
-        return <>{fallback}</>;
-    }
+  if (!hasAccess(permission)) {
+    return <>{fallback}</>;
+  }
 
-    return <>{children}</>;
+  return <>{children}</>;
 };
 
 export default PermissionGate;
