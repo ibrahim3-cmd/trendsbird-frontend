@@ -1,10 +1,14 @@
 import React, { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useGetMediaQuery } from "@/redux/features/media/media.api";
 import { Image as ImageIcon, Check, UploadCloud } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUploadMediaMutation } from "@/redux/features/media/media.api";
+
+import { getMediaUrl } from "@/utils/getMediaUrl";
 
 interface MediaPickerProps {
   open: boolean;
@@ -14,7 +18,10 @@ interface MediaPickerProps {
 }
 
 export function MediaPicker({ open, onOpenChange, onSelect, multiple = false }: MediaPickerProps) {
-  const { data, isLoading, refetch } = useGetMediaQuery({});
+  const [search, setSearch] = useState("");
+  const [page] = useState(1);
+  const limit = 48;
+  const { data, isLoading, refetch } = useGetMediaQuery({ search, page, limit });
   const [uploadMedia, { isLoading: isUploading }] = useUploadMediaMutation();
   const fileInputRef = React.useRef<HTMLInputElement | null>(null);
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
@@ -56,12 +63,18 @@ export function MediaPicker({ open, onOpenChange, onSelect, multiple = false }: 
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto py-4">
-          <div className="mb-4 flex items-center justify-end gap-2">
-            <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} accept="image/*,video/*,application/pdf" />
-            <button className="btn btn-outline flex items-center gap-2 text-sm" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
-              <UploadCloud className="h-4 w-4" />
-              {isUploading ? "Uploading..." : "Upload"}
-            </button>
+          <div className="mb-4 flex items-center justify-between gap-2">
+            <div className="flex-1 max-w-sm">
+              <Label>Search</Label>
+              <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search file name" />
+            </div>
+            <div className="flex items-center gap-2 pt-5">
+              <input ref={fileInputRef} type="file" multiple className="hidden" onChange={handleFileChange} accept="image/*,video/*,application/pdf" />
+              <Button variant="outline" className="gap-2 text-sm" onClick={() => fileInputRef.current?.click()} disabled={isUploading}>
+                <UploadCloud className="h-4 w-4" />
+                {isUploading ? "Uploading..." : "Upload"}
+              </Button>
+            </div>
           </div>
           {isLoading ? (
             <div>Loading...</div>
@@ -80,7 +93,7 @@ export function MediaPicker({ open, onOpenChange, onSelect, multiple = false }: 
                   >
                     {m.type === "image" ? (
                       <img
-                        src={m.thumbnailUrl || m.publicUrl}
+                        src={getMediaUrl(m.thumbnailUrl || m.publicUrl)}
                         alt={m.altText || m.fileName}
                         className="w-full h-full object-cover"
                       />

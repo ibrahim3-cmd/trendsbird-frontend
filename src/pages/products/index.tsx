@@ -11,6 +11,7 @@ import { toast } from "sonner";
 import { Link } from "react-router-dom";
 import { useGetBrandsQuery } from "@/redux/features/brand/brand.api";
 import { useGetCategoriesQuery } from "@/redux/features/category/category.api";
+import { getMediaUrl } from "@/utils/getMediaUrl";
 
 export default function ProductsPage() {
   const [search, setSearch] = useState("");
@@ -101,7 +102,7 @@ export default function ProductsPage() {
                 <div className="aspect-[4/3] bg-muted relative overflow-hidden">
                   {thumbnail ? (
                     <img
-                      src={thumbnail.thumbnailUrl || thumbnail.publicUrl}
+                      src={getMediaUrl(thumbnail.thumbnailUrl || thumbnail.publicUrl)}
                       alt={product.name}
                       className="w-full h-full object-cover transition-transform group-hover:scale-105"
                     />

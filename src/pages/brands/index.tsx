@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { MediaPicker } from "@/components/ui/MediaPicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getMediaUrl } from "@/utils/getMediaUrl";
 
 export default function BrandsPage() {
   const [search, setSearch] = useState("");
@@ -132,7 +133,7 @@ export default function BrandsPage() {
             <div key={brand.id} className="bg-card border rounded-lg p-4 flex flex-col items-center text-center gap-3 relative group shadow-sm hover:shadow-md transition-shadow">
               <div className="h-16 w-16 rounded-full border bg-muted flex items-center justify-center overflow-hidden">
                 {brand.logo ? (
-                  <img src={brand.logo.thumbnailUrl || brand.logo.publicUrl} alt={brand.name} className="w-full h-full object-cover" />
+                  <img src={getMediaUrl(brand.logo.thumbnailUrl || brand.logo.publicUrl)} alt={brand.name} className="w-full h-full object-cover" />
                 ) : (
                   <ImageIcon className="h-6 w-6 text-muted-foreground opacity-50" />
                 )}
@@ -182,7 +183,7 @@ export default function BrandsPage() {
               <div className="flex items-center gap-4">
                 <div className="h-16 w-16 border rounded bg-muted flex items-center justify-center overflow-hidden shrink-0">
                   {form.logoObj ? (
-                    <img src={form.logoObj.thumbnailUrl || form.logoObj.publicUrl} alt="Preview" className="w-full h-full object-cover" />
+                    <img src={getMediaUrl(form.logoObj.thumbnailUrl || form.logoObj.publicUrl)} alt="Preview" className="w-full h-full object-cover" />
                   ) : (
                     <ImageIcon className="h-6 w-6 text-muted-foreground opacity-50" />
                   )}

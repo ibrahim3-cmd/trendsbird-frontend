@@ -11,8 +11,10 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { MediaPicker } from "@/components/ui/MediaPicker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getMediaUrl } from "@/utils/getMediaUrl";
 
 export default function CategoriesPage() {
+  const [search, setSearch] = useState("");
   const { data, isLoading } = useGetCategoriesQuery({ tree: true });
   const [deleteCategory] = useDeleteCategoryMutation();
   const [createCategory] = useCreateCategoryMutation();
@@ -39,6 +41,21 @@ export default function CategoriesPage() {
       ...(cat.children ? flattenCategories(cat.children, level + 1) : []),
     ]);
   const [form, setForm] = useState(initialForm);
+
+  const filterCategories = (categories: any[], query: string): any[] => {
+    if (!query.trim()) return categories;
+    const lower = query.toLowerCase();
+    return categories
+      .map((cat) => {
+        const matches = cat.name.toLowerCase().includes(lower) || (cat.slug && cat.slug.toLowerCase().includes(lower));
+        const filteredChildren = cat.children ? filterCategories(cat.children, query) : [];
+        if (matches || filteredChildren.length > 0) {
+          return { ...cat, children: filteredChildren };
+        }
+        return null;
+      })
+      .filter(Boolean);
+  };
 
   const handleDelete = async (id: number) => {
     if (!window.confirm("Delete this category? Ensure it has no products or children.")) return;
@@ -103,7 +120,7 @@ export default function CategoriesPage() {
           <div className="flex items-center gap-4" style={{ paddingLeft: `${level * 2}rem` }}>
             <div className="h-10 w-10 bg-background border rounded overflow-hidden flex items-center justify-center shrink-0">
               {cat.image ? (
-                <img src={cat.image.thumbnailUrl || cat.image.publicUrl} alt={cat.name} className="w-full h-full object-cover" />
+                <img src={getMediaUrl(cat.image.thumbnailUrl || cat.image.publicUrl)} alt={cat.name} className="w-full h-full object-cover" />
               ) : (
                 <ImageIcon className="h-5 w-5 text-muted-foreground opacity-50" />
               )}
@@ -154,6 +171,11 @@ export default function CategoriesPage() {
         }
       />
 
+      <div className="grid gap-2 max-w-sm">
+        <Label>Search</Label>
+        <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search category name" />
+      </div>
+
       <div className="bg-card border rounded-lg overflow-hidden">
         {isLoading ? (
           <div className="p-8 text-center text-muted-foreground">Loading categories...</div>
@@ -162,7 +184,7 @@ export default function CategoriesPage() {
             {data?.data?.length === 0 ? (
               <div className="p-8 text-center text-muted-foreground">No categories found.</div>
             ) : (
-              renderTree(data?.data || [])
+              renderTree(filterCategories(data?.data || [], search))
             )}
           </div>
         )}
@@ -179,7 +201,7 @@ export default function CategoriesPage() {
               <div className="flex items-center gap-4">
                 <div className="h-16 w-16 border rounded bg-muted flex items-center justify-center overflow-hidden shrink-0">
                   {form.imageObj ? (
-                    <img src={form.imageObj.thumbnailUrl || form.imageObj.publicUrl} alt="Preview" className="w-full h-full object-cover" />
+                    <img src={getMediaUrl(form.imageObj.thumbnailUrl || form.imageObj.publicUrl)} alt="Preview" className="w-full h-full object-cover" />
                   ) : (
                     <ImageIcon className="h-6 w-6 text-muted-foreground opacity-50" />
                   )}

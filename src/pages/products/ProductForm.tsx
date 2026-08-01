@@ -16,6 +16,7 @@ import { useGetBrandsQuery } from "@/redux/features/brand/brand.api";
 import { useGetAttributesQuery } from "@/redux/features/attribute/attribute.api";
 import { useCreateProductMutation, useUpdateProductMutation, useGetProductByIdQuery } from "@/redux/features/product/product.api";
 import { MediaPicker } from "@/components/ui/MediaPicker";
+import { getMediaUrl } from "@/utils/getMediaUrl";
 
 export default function ProductFormPage() {
   const { id } = useParams();
@@ -67,7 +68,7 @@ export default function ProductFormPage() {
       setProductMedia(
         p.media?.map((m: any) => ({
           id: m.mediaId,
-          url: m.media.thumbnailUrl || m.media.publicUrl,
+          url: getMediaUrl(m.media.thumbnailUrl || m.media.publicUrl),
           isThumbnail: m.isThumbnail,
         })) || []
       );
@@ -87,7 +88,7 @@ export default function ProductFormPage() {
   const handleMediaSelect = (media: any[]) => {
     const newMedia = media.filter(m => !productMedia.some(pm => pm.id === m.id)).map(m => ({
       id: m.id,
-      url: m.thumbnailUrl || m.publicUrl,
+      url: getMediaUrl(m.thumbnailUrl || m.publicUrl),
       isThumbnail: productMedia.length === 0, // First selected becomes thumb
     }));
     setProductMedia([...productMedia, ...newMedia]);
@@ -342,7 +343,7 @@ export default function ProductFormPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
                   {productMedia.map((media) => (
                     <div key={media.id} className={`relative aspect-square border rounded-lg overflow-hidden group ${media.isThumbnail ? 'ring-2 ring-primary ring-offset-2' : ''}`}>
-                      <img src={media.url} alt="Product media" className="w-full h-full object-cover" />
+                      <img src={getMediaUrl(media.url)} alt="Product media" className="w-full h-full object-cover" />
                       <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-2">
                         {!media.isThumbnail && (
                           <Button size="sm" variant="secondary" className="h-7 text-xs px-2" onClick={() => setThumbnail(media.id)}>

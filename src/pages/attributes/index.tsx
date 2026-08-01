@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { MediaPicker } from "@/components/ui/MediaPicker";
+import { getMediaUrl } from "@/utils/getMediaUrl";
 
 export default function AttributesPage() {
   const [search, setSearch] = useState("");
@@ -272,7 +273,7 @@ export default function AttributesPage() {
                             {v.referenceMedia ? "Change media" : "Choose media"}
                           </Button>
                           {v.referenceMedia && (
-                            <img src={v.referenceMedia.thumbnailUrl || v.referenceMedia.publicUrl} alt="Reference" className="h-10 w-10 rounded border object-cover" />
+                            <img src={getMediaUrl(v.referenceMedia.thumbnailUrl || v.referenceMedia.publicUrl)} alt="Reference" className="h-10 w-10 rounded border object-cover" />
                           )}
                         </div>
                       )}

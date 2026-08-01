@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { getMediaUrl } from "@/utils/getMediaUrl";
 
 export default function MediaPage() {
   const [search, setSearch] = useState("");
@@ -137,7 +138,7 @@ export default function MediaPage() {
               <div className="aspect-square bg-muted flex items-center justify-center overflow-hidden">
                 {m.type === "image" ? (
                   <img
-                    src={m.thumbnailUrl || m.publicUrl}
+                    src={getMediaUrl(m.thumbnailUrl || m.publicUrl)}
                     alt={m.altText || m.fileName}
                     className="w-full h-full object-cover"
                   />
