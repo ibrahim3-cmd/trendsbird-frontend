@@ -50,6 +50,7 @@ const refreshAccessToken = async () => {
 // Add a request interceptor
 axiosInstance.interceptors.request.use(
   function (config) {
+    console.log("API request target:", `${config.baseURL || ""}${config.url || ""}`);
     // Do something before request is sent
     const token = localStorage.getItem("token");
     if (token && !isPublicAuthRequest(config.url)) {
