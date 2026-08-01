@@ -1,4 +1,4 @@
-const isLive = import.meta.env.VITE_IS_LIVE === "true";
+import { isLive } from "@/constants/constant";
 
 const config = {
   baseUrl: isLive
